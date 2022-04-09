@@ -1,11 +1,18 @@
-const { Class } = require('../models');
+const { School, Class, Professor } = require('../models');
 
-// Create the functions that fulfill the queries defined in `typeDefs.js`
 const resolvers = {
   Query: {
+    schools: async () => {
+      return await School.find({}).populate('classes').populate({
+        path: 'classes',
+        populate: 'professor'
+      });
+    },
     classes: async () => {
-      // Get and return all documents from the classes collection
-      return await Class.find({});
+      return await Class.find({}).populate('professor');
+    },
+    professors: async () => {
+      return await Professor.find({});
     }
   }
 };

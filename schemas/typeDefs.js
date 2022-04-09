@@ -1,17 +1,34 @@
 const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
-  # Define which fields are accessible from the Class model
+  type School {
+    _id: ID
+    name: String
+    location: String
+    studentCount: Int
+    classes: [Class]
+  }
+
   type Class {
     _id: ID
     name: String
     building: String
     creditHours: Int
+    professor: Professor
   }
 
-  # Define which queries the front end is allowed to make and what data is returned
+  type Professor {
+    _id: ID
+    name: String
+    officeHours: String
+    officeLocation: String
+    studentScore: Float
+  }
+
   type Query {
+    schools: [School]
     classes: [Class]
+    professors: [Professor]
   }
 `;
 
