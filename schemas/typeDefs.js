@@ -23,13 +23,22 @@ const typeDefs = gql`
     officeHours: String
     officeLocation: String
     studentScore: Float
+    classes: [Class]
   }
 
   type Query {
     schools: [School]
     classes: [Class]
     professors: [Professor]
+    class(id: ID!): Class
+  }
+
+  type Mutation {
+    addSchool(name: String!, location: String!, studentCount: Int!): School
+    # Define the required parameters for updating a class
+    updateClass(id: ID!, building: String!): Class
   }
 `;
 
 module.exports = typeDefs;
+
