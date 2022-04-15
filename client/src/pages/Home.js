@@ -1,24 +1,25 @@
 import React from 'react';
-// Import the `useQuery()` hook from Apollo Client
 import { useQuery } from '@apollo/client';
 
 import ThoughtList from '../components/ThoughtList';
+import ThoughtForm from '../components/ThoughtForm';
 
-// Import the query we are going to execute from its file
 import { QUERY_THOUGHTS } from '../utils/queries';
 
 const Home = () => {
-  // Execute the query on component load
   const { loading, data } = useQuery(QUERY_THOUGHTS);
-
-  // Use optional chaining to check if data exists and if it has a thoughts property. If not, return an empty array to use.
   const thoughts = data?.thoughts || [];
 
   return (
     <main>
       <div className="flex-row justify-center">
+        <div
+          className="col-12 col-md-10 mb-3 p-3"
+          style={{ border: '1px dotted #1a1a1a' }}
+        >
+          <ThoughtForm />
+        </div>
         <div className="col-12 col-md-8 mb-3">
-          {/* If the data is still loading, render a loading message */}
           {loading ? (
             <div>Loading...</div>
           ) : (
@@ -34,3 +35,4 @@ const Home = () => {
 };
 
 export default Home;
+
