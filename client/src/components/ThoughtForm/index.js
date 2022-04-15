@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 
 import { ADD_THOUGHT } from '../../utils/mutations';
+import { QUERY_THOUGHTS } from '../../utils/queries';
 
 const ThoughtForm = () => {
   const [formState, setFormState] = useState({
@@ -10,20 +11,33 @@ const ThoughtForm = () => {
   });
   const [characterCount, setCharacterCount] = useState(0);
 
-  // Set up our mutation with an option to handle errors
-  const [addThought, { error }] = useMutation(ADD_THOUGHT);
+  const [addThought, { error }] = useMutation(ADD_THOUGHT, {
+    update(cache, { data: { addThought } }) {
+      try {
+        const { thoughts } = cache.readQuery({ query: QUERY_THOUGHTS });
+
+        cache.writeQuery({
+          query: QUERY_THOUGHTS,
+          data: { thoughts: [addThought, ...thoughts] },
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    },
+  });
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
-    // On form submit, perform mutation and pass in form data object as arguments
-    // It is important that the object fields are match the defined parameters in `ADD_THOUGHT` mutation
     try {
-      const { data } = addThought({
+      const { data } = await addThought({
         variables: { ...formState },
       });
 
-      window.location.reload();
+      setFormState({
+        thoughtText: '',
+        thoughtAuthor: '',
+      });
     } catch (err) {
       console.error(err);
     }
@@ -62,6 +76,7 @@ const ThoughtForm = () => {
             placeholder="Here's a new thought..."
             value={formState.thoughtText}
             className="form-input w-100"
+            style={{ lineHeight: '1.5' }}
             onChange={handleChange}
           ></textarea>
         </div>
